@@ -1,8 +1,9 @@
 <template>
 
-    <v-col cols="12"  sm="3" class="my-5 border-md" >
+    <v-col cols="12"  sm="3" class="my-5 border-md px-5" >
         
         <div class="mb-1 py5">
+            
             <span  class="font-weight-bold">Selecciona un Ticker:</span>
             <v-row>
                 <v-col cols="10">
@@ -33,9 +34,12 @@
         </div>
 
         <div class="mb-1">
-            <v-text-field append-icon="mdi-margin"
-            min=0 type="number" v-model="tickerData.margen" label="Margen" required>
-            </v-text-field>
+            <v-select
+                append-icon="mdi-margin"
+                :items="margenList"
+                v-model="tickerData.margen"
+                label="Margen"
+            ></v-select>
         </div>
 
         <div class="mb-5">
@@ -64,12 +68,15 @@
 
         <div class="mb-1">
             <v-select append-icon="mdi-timetable"
-            v-model="tickerData.interval" :items="listPeriod" label="Periodo"></v-select>
+                v-model="tickerData.interval" 
+                :items="listPeriod" 
+                label="Periodo"
+            ></v-select>
         </div>
 
         <div class="d-flex flex-column">
             <v-btn @click="startBacktest" color="primary">Iniciar</v-btn>
-            <v-btn class="mt-2" color="warning">Limpiar</v-btn>
+            <v-btn @click="onClear" class="mt-2" color="warning">Limpiar</v-btn>
         </div>
 
     </v-col>
@@ -96,7 +103,7 @@ import Swal from 'sweetalert2'
     const tickerData = ref(
         {
             capital:0,
-            margen:0,
+            margen:"",
             ticker: "",
             dateStart: "",
             dateEnd: "",
@@ -115,7 +122,8 @@ import Swal from 'sweetalert2'
     }
 
 
-    const listPeriod = ['30min', '60min', 'Diario', 'Semanal']
+    const listPeriod = ['30 Minutos', '1 Hora', '1 Dia']
+    const margenList = [ '1:1', '2:1', '3:1', '4:1', '5:1' ]
 
     const tickers = computed( () => store.state.backtest.tickers )
     const selectItem = ( item ) =>{
@@ -126,32 +134,53 @@ import Swal from 'sweetalert2'
         tickerData.value.dateStart = dateFormat( dateStart.value )
         tickerData.value.dateEnd = dateFormat( dateEnd.value )
         tickerData.value.email = email.value
+        const size = computed( () => store.getters["backtest/getIndicatorsLen"] )
+
+        if( tickerData.value.capital === 0 || tickerData.value.margen === "" ||
+         tickerData.value.ticker === "" ||  tickerData.value.interval === "" || size.value===0){
+             console.log(tickerData.value)
+             Swal.fire({
+                title: 'Advertencia',
+                text: 'Por favor llene todos los campos y agregue por lo menos un indicador',
+                icon:'warning'
+            })
+         }else{
+
         
+            const { ok, message } = await store.dispatch("backtest/startBacktest", tickerData.value )
 
-
-
-
-        const { ok, message } = await store.dispatch("backtest/startBacktest", tickerData.value )
-
-        if ( !ok ) {
-            Swal.fire('Error', message, 'error')
-        } 
-        else  {
-            Swal.fire(
-            {
-                title:'Baktest Exitoso',
-                icon:'success',
-                allowEscapeKey:false,
-                allowOutsideClick:false
-            }
-            ).then((result) => 
+            if ( !ok ) {
+                Swal.fire('Error', message, 'error')
+            } 
+            else  {
+                Swal.fire(
                 {
-                    if (result.isConfirmed) {
-                        router.push({ name: 'backtestResult' }) 
-                    } 
+                    title:'Baktest Exitoso',
+                    icon:'success',
+                    allowEscapeKey:false,
+                    allowOutsideClick:false
                 }
-            )
-        }
+                ).then((result) => 
+                    {
+                        if (result.isConfirmed) {
+                            router.push({ name: 'backtestResult', params: { show:true } }) 
+                        } 
+                    }
+                )
+            }
+         }
+    }
+
+
+    const onClear = async() =>{
+        await store.dispatch("backtest/clearFormBacktest")
+        tickerData.value.capital=0
+        tickerData.value.margen=""
+        tickerData.value.ticker= ""
+        tickerData.value.dateStart= ""
+        tickerData.value.dateEnd= ""
+        tickerData.value.interval= ""
+        tickerData.value.email=""
     }
         
 </script>

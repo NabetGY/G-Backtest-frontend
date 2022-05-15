@@ -1,13 +1,11 @@
 
 export default() => ({
-    isLoading: true,
+    isLoading: false,
+    show: false,
     tickers: [],
-    selectedTicker:"",
-    dateStart: "",
-    dateEnd: "",
-    interval: "",
     indicators: [],
+    tickerForm: {},
     backtests:[],
-    myBacktests:[]
+    dataBacktest:{}
 
 })

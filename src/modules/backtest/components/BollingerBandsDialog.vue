@@ -1,8 +1,12 @@
 <template>
 
-    <v-dialog v-model="dialog" activator="parent" :retain-focus="false">
+    <v-dialog
+        v-model="dialog"
+        activator="parent"
+        :retain-focus="false"
+    >
 
-        <v-card min-width="550"> 
+        <v-card min-width="550">
 
             <v-toolbar color="primary">Bollinger Bandas</v-toolbar>
 
@@ -11,22 +15,42 @@
             </v-card-title>
 
             <div class="px-6 pt-3">
-                
-                <v-text-field min=0 type="number" v-model="period" label="Periodo" required>
+
+                <v-text-field
+                    min=0
+                    type="number"
+                    v-model="period"
+                    label="Periodo"
+                    required
+                >
                 </v-text-field>
 
-                <v-text-field min=0 type="number" v-model="std" label="Desviacion Estandar" required>
+                <v-text-field
+                    min=0
+                    type="number"
+                    v-model="std"
+                    label="Desviacion Estandar"
+                    required
+                >
                 </v-text-field>
 
             </div>
-    
+
             <v-card-actions>
 
-                <v-btn color="success" class="ma-2" @click="saveIndicator">
+                <v-btn
+                    color="success"
+                    class="ma-2"
+                    @click="saveIndicator"
+                >
                     Guardar
                 </v-btn>
 
-                <v-btn color="primary" text @click="dialog = !dialog">
+                <v-btn
+                    color="primary"
+                    text
+                    @click="dialog = !dialog"
+                >
                     Volver
                 </v-btn>
 
@@ -35,24 +59,26 @@
         </v-card>
 
     </v-dialog>
-            
+
 </template>
 
 <script setup>
-import { v4 as uuidv4 } from 'uuid';
-import { ref } from 'vue'
-import { useStore } from 'vuex'
+    import { v4 as uuidv4 } from 'uuid';
+    import { ref } from 'vue'
+    import { useStore } from 'vuex'
 
     const store = useStore()
-    const period = ref(0)
-    const std = ref(0)
-    const dialog = ref(false)
+    const period = ref( 0 )
+    const std = ref( 0 )
+    const dialog = ref( false )
 
-    const indicators = ref({
-        id: uuidv4(),
-        indicatorName: "BollingerBands",
-        config: []
-    })
+    const indicators = ref(
+        {
+            id: uuidv4(),
+            indicatorName: "BollingerBands",
+            config: []
+        }
+    )
 
 
 
@@ -64,11 +90,10 @@ import { useStore } from 'vuex'
             }
         )
         dialog.value = false
-        store.dispatch("backtest/addIndicator", indicators.value )
+        store.dispatch( "backtest/addIndicator", indicators.value )
     }
- 
+
 </script>
 
 <style scoped>
-
 </style>

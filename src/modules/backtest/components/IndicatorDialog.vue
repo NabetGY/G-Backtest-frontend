@@ -6,7 +6,7 @@
             
             <v-btn color="indigo" class="ma-2">
 
-                Agregar otro indicador
+                Agregar indicador
 
                 <v-dialog v-model="dialogSelectIndicator" activator="parent" :retain-focus="false">
 
@@ -18,9 +18,9 @@
                             Seleccione un indicator:
                         </v-card-title>
 
-                        <v-card-text>
+                        <div class="px-7 py-3">
                             <v-select v-model="indicator" :items="listIndicators" label="Indicadores"></v-select>
-                        </v-card-text>
+                        </div>
 
                         <v-card-actions>
 
@@ -69,15 +69,15 @@
         import("@/modules/backtest/components/IchimokuDialog.vue")
     )
     
-    const indicator = ref("MADialogVue")
+    const indicator = ref("Medias moviles")
     const dialogSelectIndicator = ref(false)
-    const listIndicators = ['MADialogVue', 'DochianChannelsDialogVue', 'IchimokuDialogVue', 'BollingerBandsDialogVue']
+    const listIndicators = ['Medias moviles', 'Donchian Channels', 'Nubes de Ichimoku', 'Bandas de Bollinger']
 
     const dialogs = {
-        MADialogVue,
-        IchimokuDialogVue,
-        DochianChannelsDialogVue,
-        BollingerBandsDialogVue,
+        'Medias moviles': MADialogVue,
+        'Nubes de Ichimoku': IchimokuDialogVue,
+        'Donchian Channels': DochianChannelsDialogVue,
+        'Bandas de Bollinger': BollingerBandsDialogVue,
     }
 
 </script>

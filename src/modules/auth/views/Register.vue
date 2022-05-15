@@ -6,7 +6,7 @@
                 alt=""
                 max-height="550"
                 contain
-                class="">
+                class="box">
             </v-img>
         </v-col>
 
@@ -109,7 +109,7 @@ export default{
                 ).then((result) => 
                     {
                         if (result.isConfirmed) {
-                            router.push('login') 
+                            router.push({ name: 'login' }) 
                         } 
                     }
                 )
@@ -155,6 +155,12 @@ export default{
 </script>
 
 <style scoped>
+
+.box{
+    background-color: black;
+    border-radius: 10px;
+
+}
 
 .box img {
    width: 100%;

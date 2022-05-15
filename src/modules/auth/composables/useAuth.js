@@ -12,9 +12,17 @@ const useAuth = () => {
         return resp
     }
 
-    const updateUser = async( user ) => {
+    const updateUsername = async( user ) => {
 
         const resp = await store.dispatch('auth/updateUser', user )
+        
+        return resp
+    }
+
+
+    const deleteUser = async( user ) => {
+
+        const resp = await store.dispatch('auth/deleteUser', user )
         
         return resp
     }
@@ -23,6 +31,20 @@ const useAuth = () => {
     const loginUser = async( user ) => {
 
         const resp = await store.dispatch('auth/signInUser', user )
+        
+        return resp
+    }
+
+    const recovery = async( email ) => {
+
+        const resp = await store.dispatch('auth/recovery', email )
+        
+        return resp
+    }
+
+    const reset = async( pass ) => {
+
+        const resp = await store.dispatch('auth/reset', pass )
         
         return resp
     }
@@ -45,9 +67,12 @@ const useAuth = () => {
     return {
         checkAuthStatus,
         createUser,
-        updateUser,
+        updateUsername,
         loginUser,
         logout,
+        deleteUser,
+        recovery,
+        reset,
         authStatus: computed( () => store.getters['auth/currentState']),
         username: computed( () => store.getters['auth/username']),
         img_profile : computed( () => store.getters['auth/img_profile']),

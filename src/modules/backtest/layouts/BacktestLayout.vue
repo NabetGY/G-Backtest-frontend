@@ -15,30 +15,21 @@
 
 </template>
 
-<script>
-import { computed } from "vue";
+<script setup>
+import { computed, onMounted, onUnmounted} from "vue";
 import { useStore } from 'vuex';
 
-/* import useAuth from './modules/auth/composables/useAuth'
- */
-export default {
-  components: {
-    
-  },
-
-  setup(){
     const store = useStore()
-    const email = computed( () => store.state.auth.email )
 
-    store.dispatch('backtest/loadTickers')
-    store.dispatch('backtest/loadMyBacktests', email.value )
+    const isLoading =  computed( () => store.state.backtest.isLoading )
 
+    onMounted( () => {
+       store.dispatch('backtest/loadTickers')
+    })
+    onUnmounted( () => {
+       store.dispatch('backtest/clearTickers') 
+    })
 
-    return {
-      isLoading: computed( () => store.state.backtest.isLoading )
-    }
-  }
-};
 </script>
 
 <style scoped>

@@ -43,10 +43,25 @@ const useBacktest = () => {
         return resumen
     }
 
+    const numberFormat = (num) => {
 
-    
+        if ( typeof(num)==='string' ){
+            return num
+        } else {
+            const format = num.toFixed(3);
+            return format
+        }
+    }
+
+    const dateFormat = ( date ) => {
+        const dateSplit = date.split('T')
+        const format = dateSplit[0] +' '+ dateSplit[1]
+        return format
+    }
 
     return {
+        numberFormat,
+        dateFormat,
         addIndicator,
         removeIndicator,
         macdResumen,

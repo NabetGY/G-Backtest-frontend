@@ -28,7 +28,7 @@
                             title="Inicio"
                             active-color="primary"
                             value="Inicio"
-                            to="/backtest"
+                            to="/backtesting"
                             link
                         ></v-list-item>
 
@@ -46,6 +46,16 @@
                             title="Cuenta"
                             active-color="primary"
                             value="Cuenta"
+                            to="/edit"
+                            link
+                        ></v-list-item>
+
+                        <v-list-item 
+                            prepend-icon="mdi-help" 
+                            title="Ayuda"
+                            active-color="primary"
+                            value="Ayuda"
+                            to="/teory"
                             link
                         ></v-list-item>
                         
@@ -75,7 +85,8 @@
 
 <script setup>
 
-import { computed, ref } from "vue";
+import axios from 'axios'
+import { computed, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import useAuth from '@/modules/auth/composables/useAuth'
 import { useRouter } from "vue-router";
@@ -90,6 +101,18 @@ import { useRouter } from "vue-router";
     const router = useRouter()
     
     const isAuthenticated = computed( () => store.state.auth.status )
+    const token = computed( () => store.state.auth.token )
+
+    onMounted( () => {
+       if (token.value) {
+        axios.defaults.headers.common['Authorization'] = "Token " + token.value
+    } else {
+        axios.defaults.headers.common['Authorization'] = ""
+    }
+    })
+
+    
+
 
     const intViewportHeight = ref("")
     const height = window.innerHeight-64

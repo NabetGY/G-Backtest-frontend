@@ -21,7 +21,7 @@
                         >
                             <template v-slot:append>
                                 <v-list-item-avatar right>
-                                    <v-btn variant="text" color="grey lighten-1" icon="mdi-delete-circle"></v-btn>
+                                    <v-btn @click="removeMA(index)" variant="text" color="grey lighten-1" icon="mdi-delete-circle"></v-btn>
                                 </v-list-item-avatar>
                             </template>
                         </v-list-item>
@@ -93,6 +93,12 @@
 
         MA.value = ""
         periodo.value =  0
+    }
+
+
+    const removeMA = ( index ) => {
+        console.log(index)
+        indicators.value.config.splice(index, 1)
     }
   
     const saveIndicator = () => {

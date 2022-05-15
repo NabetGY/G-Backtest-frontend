@@ -33,8 +33,6 @@ import { VueDraggableNext as  draggable } from 'vue-draggable-next'
     const TickerFormVue = defineAsyncComponent( () => import('@/modules/backtest/components/TickerForm.vue'))
     const IndicatorInfoCardVue = defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorInfoCard.vue'))
 
-
-
     const store = useStore()
 
     const indicators = computed({

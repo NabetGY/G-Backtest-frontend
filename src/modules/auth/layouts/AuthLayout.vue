@@ -1,6 +1,6 @@
 <template>
   <v-container class="height-app">
-      <v-overlay :model-value="false" class="align-center justify-center">
+      <v-overlay :model-value="isLoading" class="align-center justify-center">
         <v-progress-circular
           color="purple"
           indeterminate
@@ -19,8 +19,6 @@
 import { computed } from "vue";
 import { useStore } from 'vuex';
 
-/* import useAuth from './modules/auth/composables/useAuth'
- */
 export default {
   components: {
     
@@ -28,7 +26,6 @@ export default {
 
   setup(){
     const store = useStore()
-    store.dispatch('backtest/loadTickers')
 
     return {
       isLoading: computed( () => store.state.backtest.isLoading )

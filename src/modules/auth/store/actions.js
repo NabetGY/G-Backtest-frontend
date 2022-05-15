@@ -1,112 +1,141 @@
-/* import rentalApi from "@/api/rentalApi"
- */import axios from 'axios';
+ import axios from 'axios';
 
 /* export const myAction = async({ commit }) => {
 
 } */
 
 
+const url = 'https://g-backtest-api.herokuapp.com'
+// const url = 'http://127.0.0.1:8000'
+
+
 export const createUser = async ( { commit }, user ) => {
 
     const { username, email, password } = user
 
-    try {
-        const { data } = await axios.post('http://127.0.0.1:8000/usuario/', { email, password, username })
+    const resp = await axios.
+                post( url+'/register/', { email, password, username })
+                .then( response => {
+
+                    const { message } = response.data
+
+                    delete user.password
+                                            
+                    return { ok: true, message: message }
         
-        const { message } = data
+                })
+                .catch( error => {
 
-        delete user.password
+                    commit('logout')
+
+                    console.log(error.response)
         
-        commit('logout')
-        
-        return { ok: true, message: message }
-
-    } catch (error) {
-
-        console.log('error')
-
-        commit('logout')
-        /* location.reload(); */
-        return { ok: false, message: error.response.data.error.message}
-    }
+                    return { ok: false, message: error.response.data.message }
+                })
+    
+    return resp
 }
 
-export const updateUser = async ( { commit }, user ) => {
 
-    const { email, username, image_perfil, number_phone } = user
+export const updateUser = async ( { commit }, userdata ) => {
 
-    try {
-        const { data } = await axios.put('https://lumayo-arrendamientos.herokuapp.com/user/user/'+email+'/', { username, image_perfil, number_phone },
-            {
-                headers: {
-                    Authorization: 'Bearer '+localStorage.getItem('token')
-                }
-            }
-        )
+    const {email, username} =  userdata
+
+    const resp = await axios.
+                post( url+'/update/', {email, username})
+                .then( response => {
+
+                    const { username, message } = response.data
+
+                    commit('updateUsername',  username )
+                                            
+                    return { ok: true, message: message }
         
-        const { message } = data
-
-        commit('updateUser', { username, image_perfil, number_phone })
+                })
+                .catch( error => {
         
-        return { ok: true, message: message }
+                    return { ok: false, message: error.response.data.message }
+                })
+    
+    return resp
+}
 
-    } catch (error) {
-        console.log('error')
 
-        commit('logout')
-        location.reload();
-        return { ok: false, message: error.response.data.error.message}
-    }
+
+export const deleteUser = async ( { commit }, email ) => {
+
+    const resp = await axios.
+                post( url+'/delete/', email)
+                .then( response => {
+
+                    const { message } = response.data
+
+                    commit('logout')
+                                            
+                    return { ok: true, message: message }
+        
+                })
+                .catch( error => {
+        
+                    return { ok: false, message: error.response.data.message }
+                })
+    
+    return resp
 }
 
 
 export const signInUser = async ( { commit }, user ) => {
 
     const { email, password } = user
-    try {
 
-        const resp = await axios.post('http://127.0.0.1:8000/login/', { email, password })
+    axios.defaults.headers.common['Authorization'] = ''
 
-        const { data } = resp
+    const resp = await axios
+        .post( url+'/login/', { email, password })
+        .then( response => {
 
-        const {  token, refreshToken , user, message } = data
-        
-        commit('loginUser', {  token, refreshToken , user })
+            const {  token, user, message } = response.data
 
-        return { ok: true, message: message }
-        
-    } catch (error) {
-        commit('logout')
-        /* location.reload(); */
-        console.log('error')
+            commit('loginUser', {  token , user })
 
-        return { ok: false, message: error.response.data.error.message }
-        
-    }
+            axios.defaults.headers.common['Authorization'] = 'Token '+ token 
 
+            console.log(response.data)
+
+            return { ok: true, message: message }
+
+        })
+        .catch( error => {
+            commit('logout')
+
+            return { ok: false, message: error.response.data.error }
+        })
+
+    
+    return resp
 }
 
-export const userLogout = async ( { commit }, email ) => {
 
+export const userLogout = async ( { commit } ) => {
+
+    const token = localStorage.getItem('token')
     try {
-        const resp = await axios.post('http://127.0.0.1:8000/logout/', { email },
-            {
-                headers: {
-                    Authorization: 'Bearer '+localStorage.getItem('token')
-                }
-            }
+        const resp = await axios.post( url+'/logout/', { token } 
+        
         )
-        const { data } = resp
-        const { message } = data
+        console.log('entro al try')
+        console.log(resp)
+
+        axios.defaults.headers.common['Authorization'] = ''
 
         commit('logout')
-        location.reload();
-        return { ok: true, message: message }
+        /* location.reload(); */
+        return { ok: true, message: "Sesion terminada." }
         
     } catch (error) {
             console.log('error')
             commit('logout')
-            location.reload(); 
+            /* location.reload(); */ 
         
         return { ok: false, message: 'error' }
         
@@ -120,36 +149,15 @@ export const userLogout = async ( { commit }, email ) => {
 export const checkAuthentication = async({ commit }) => {
 
     const token = localStorage.getItem('token')
-    const refreshToken = localStorage.getItem('refreshToken')
-
 
     if (!token) {
-        console.log('token')
+        console.log('no hay token')
 
         commit('logout')
         return { ok: false, message: 'No hay token' }
     }
 
-    try {
-        console.log('try')
-        const response = await axios.post(`http://127.0.0.1:8000/api/token/refresh/`, {
-            refresh: refreshToken
-        });
-        const {  access, refresh  } = response.data
-        commit('loginUser', { user:false, token:access, refreshToken:refresh})
-        
-        return { ok : true }
-
-    } catch (error) {
-        console.log('error')
-
-        commit('logout')
-        return { ok: false, message: error.response.data.error.message }
-
-        
-    }
-
-
+    return { ok: true }
 }
 
 
@@ -157,3 +165,46 @@ export const setTokens = async({ commit }, token, refreshToken, user) => {
     commit('loginUser', { user, token, refreshToken})
 }
 
+export const recovery = async ( { commit }, email ) => {
+
+
+    const resp = await axios
+        .post( url+'/api/password_reset/', email )
+        .then( response => {
+
+            const { data } = response
+
+            const { message } = data
+
+            return { ok: true, message: message }
+
+        })
+        .catch( error => {
+            commit('logout')
+            return { ok: false, message: error.response.data.error }
+        })
+    
+    return resp
+}
+
+
+export const reset = async ( { commit }, data ) => {
+    console.log(data)
+    const resp = await axios
+        .post( url+'/api/password_reset/confirm/', {...data})
+        .then( response => {
+
+            const { data } = response
+
+            const { message } = data
+
+            return { ok: true, message: message }
+
+        })
+        .catch( error => {
+            commit('logout')
+            return { ok: false, message: error.response.data.password }
+        })
+    
+    return resp
+}

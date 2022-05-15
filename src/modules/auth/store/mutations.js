@@ -3,16 +3,11 @@
 
 } */
 
-export const loginUser = ( state, { user, token, refreshToken } ) => {
+export const loginUser = ( state, { user, token } ) => {
     if ( token ) {
        localStorage.setItem('token', token)
        state.token = token
    }
-
-   if ( refreshToken ) {
-    localStorage.setItem('refreshToken', refreshToken)
-    state.refreshToken = refreshToken
-    }
 
     if ( user ) {
         const {username, email} = user
@@ -27,31 +22,25 @@ export const loginUser = ( state, { user, token, refreshToken } ) => {
     }
     state.status = 'authenticated'
     state.checking = false
-    
-    
+
 }
 
-export const updateUser = ( state, { username } ) => {
+export const updateUsername = ( state,  username  ) => {
 
     localStorage.setItem('username', username)
 
-
     state.username = username
-
- 
 }
 
 export const logout = ( state ) => {
     state.status = 'no-authenicate'
     state.user= null
     state.token = null
-    state.refreshToken= null
 
-
+    localStorage.setItem('token', '')
     localStorage.removeItem('user')
     localStorage.removeItem('email')
     localStorage.removeItem('username')
     localStorage.removeItem('token')
-    localStorage.removeItem('refreshToken')
 
 }
